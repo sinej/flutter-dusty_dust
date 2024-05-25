@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:dusty_dust/model/stat_model.dart';
+import 'package:dusty_dust/utils//date_utils.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 
@@ -18,9 +20,24 @@ class MainStat extends StatelessWidget {
     return SafeArea(
       child: SizedBox(
         width: double.infinity,
-        child: FutureBuilder<List<StatModel>>(
-          future: GetIt.I<Isar>(),
+        child: FutureBuilder<StatModel?>(
+          future: GetIt.I<Isar>().statModels.filter()
+              .regionEqualTo(Region.seoul)
+              .itemCodeEqualTo(ItemCode.PM10)
+            .findFirst(),
           builder: (context, snapshot) {
+            if(!snapshot.hasData && snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
+
+            if(!snapshot.hasData) {
+              return Center(
+                child: Text('데이터가 없습니다.'),
+              );
+            };
+
+            final statModel = snapshot.data!;
+
             return Column(
               children: [
                 Text(
@@ -28,7 +45,9 @@ class MainStat extends StatelessWidget {
                   style: ts,
                 ),
                 Text(
-                  '2024-05-31',
+                DateUtils.DateTimeToString(
+                  dateTime: statModel.dateTime,
+                ),
                   style: ts.copyWith(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w500
