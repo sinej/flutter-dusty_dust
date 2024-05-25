@@ -1,12 +1,19 @@
+import 'package:dusty_dust/const/status_lavel.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/utils//date_utils.dart';
+import 'package:dusty_dust/utils/status_utils.dart';
 import 'package:flutter/material.dart' hide DateUtils;
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 
 class MainStat extends StatelessWidget {
 
-  const MainStat({super.key});
+  final Region region;
+
+  const MainStat({
+    required this.region,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,7 @@ class MainStat extends StatelessWidget {
         width: double.infinity,
         child: FutureBuilder<StatModel?>(
           future: GetIt.I<Isar>().statModels.filter()
-              .regionEqualTo(Region.seoul)
+              .regionEqualTo(region)
               .itemCodeEqualTo(ItemCode.PM10)
             .findFirst(),
           builder: (context, snapshot) {
@@ -37,6 +44,8 @@ class MainStat extends StatelessWidget {
             };
 
             final statModel = snapshot.data!;
+
+            final status = StatusUtils.getStatusModelFromStat(statModel: statModel);
 
             return Column(
               children: [
@@ -55,16 +64,16 @@ class MainStat extends StatelessWidget {
                 ),
                 SizedBox(height: 20.0),
                 Image.asset(
-                  'asset/image/good.png',
+                  status.imagePath,
                   width: MediaQuery.of(context).size.width / 2,
                 ),
                 SizedBox(height: 20.0),
                 Text(
-                  '보통',
+                  status.label,
                   style: ts,
                 ),
                 Text(
-                  '나쁘지 않네요',
+                  status.comment,
                   style: ts.copyWith(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w500
