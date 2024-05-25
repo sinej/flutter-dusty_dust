@@ -1,3 +1,4 @@
+import 'package:dusty_dust/const/color.dart';
 import 'package:dusty_dust/const/status_lavel.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/utils//date_utils.dart';
@@ -9,9 +10,13 @@ import 'package:isar/isar.dart';
 class MainStat extends StatelessWidget {
 
   final Region region;
+  final Color primaryColor;
+  final bool isExpanded;
 
   const MainStat({
     required this.region,
+    required this.primaryColor,
+    required this.isExpanded,
     super.key
   });
 
@@ -24,66 +29,75 @@ class MainStat extends StatelessWidget {
       fontWeight: FontWeight.w700,
     );
 
-    return SafeArea(
-      child: SizedBox(
-        width: double.infinity,
-        child: FutureBuilder<StatModel?>(
-          future: GetIt.I<Isar>().statModels.filter()
-              .regionEqualTo(region)
-              .itemCodeEqualTo(ItemCode.PM10)
-            .findFirst(),
-          builder: (context, snapshot) {
-            if(!snapshot.hasData && snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
+    return SliverAppBar(
+      backgroundColor: primaryColor,
+      expandedHeight: 500,
+      pinned: true,
+      title: isExpanded ? null : Text('${region.KrName}'),
+      flexibleSpace: FlexibleSpaceBar(
+        background: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            child: FutureBuilder<StatModel?>(
+                future: GetIt.I<Isar>().statModels.filter()
+                    .regionEqualTo(region)
+                    .itemCodeEqualTo(ItemCode.PM10)
+                    .findFirst(),
+                builder: (context, snapshot) {
+                  if(!snapshot.hasData && snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
 
-            if(!snapshot.hasData) {
-              return Center(
-                child: Text('데이터가 없습니다.'),
-              );
-            };
+                  if(!snapshot.hasData) {
+                    return Center(
+                      child: Text('데이터가 없습니다.'),
+                    );
+                  };
 
-            final statModel = snapshot.data!;
+                  final statModel = snapshot.data!;
 
-            final status = StatusUtils.getStatusModelFromStat(statModel: statModel);
+                  final status = StatusUtils.getStatusModelFromStat(statModel: statModel);
 
-            return Column(
-              children: [
-                Text(
-                  '서울',
-                  style: ts,
-                ),
-                Text(
-                DateUtils.DateTimeToString(
-                  dateTime: statModel.dateTime,
-                ),
-                  style: ts.copyWith(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500
-                  ),
-                ),
-                SizedBox(height: 20.0),
-                Image.asset(
-                  status.imagePath,
-                  width: MediaQuery.of(context).size.width / 2,
-                ),
-                SizedBox(height: 20.0),
-                Text(
-                  status.label,
-                  style: ts,
-                ),
-                Text(
-                  status.comment,
-                  style: ts.copyWith(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500
-                  ),
-                ),
-              ],
-            );
-          }
+                  return Column(
+                    children: [
+                      SizedBox(height: kToolbarHeight),
+                      Text(
+                        region.KrName,
+                        style: ts,
+                      ),
+                      Text(
+                        DateUtils.DateTimeToString(
+                          dateTime: statModel.dateTime,
+                        ),
+                        style: ts.copyWith(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      Image.asset(
+                        status.imagePath,
+                        width: MediaQuery.of(context).size.width / 2,
+                      ),
+                      SizedBox(height: 20.0),
+                      Text(
+                        status.label,
+                        style: ts,
+                      ),
+                      Text(
+                        status.comment,
+                        style: ts.copyWith(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500
+                        ),
+                      ),
+                    ],
+                  );
+                }
+            ),
+          ),
         ),
-      ),
+      )
     );
   }
 }
