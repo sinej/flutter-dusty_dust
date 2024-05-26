@@ -64,7 +64,7 @@ enum Region{
 }
 
 enum ItemCode{
-  S02,
+  SO2,
   CO,
   O3,
   NO2,
@@ -73,7 +73,7 @@ enum ItemCode{
 
   String get KrName {
     switch(this) {
-      case ItemCode.S02:
+      case ItemCode.SO2:
         return '이황산가스';
       case ItemCode.CO:
         return '일산화탄소';

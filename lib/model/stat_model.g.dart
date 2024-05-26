@@ -110,7 +110,7 @@ StatModel _statModelDeserialize(
   object.id = id;
   object.itemCode =
       _StatModelitemCodeValueEnumMap[reader.readByteOrNull(offsets[1])] ??
-          ItemCode.S02;
+          ItemCode.SO2;
   object.region =
       _StatModelregionValueEnumMap[reader.readByteOrNull(offsets[2])] ??
           Region.daegu;
@@ -129,7 +129,7 @@ P _statModelDeserializeProp<P>(
       return (reader.readDateTime(offset)) as P;
     case 1:
       return (_StatModelitemCodeValueEnumMap[reader.readByteOrNull(offset)] ??
-          ItemCode.S02) as P;
+          ItemCode.SO2) as P;
     case 2:
       return (_StatModelregionValueEnumMap[reader.readByteOrNull(offset)] ??
           Region.daegu) as P;
@@ -141,7 +141,7 @@ P _statModelDeserializeProp<P>(
 }
 
 const _StatModelitemCodeEnumValueMap = {
-  'S02': 0,
+  'SO2': 0,
   'CO': 1,
   'O3': 2,
   'NO2': 3,
@@ -149,7 +149,7 @@ const _StatModelitemCodeEnumValueMap = {
   'PM25': 5,
 };
 const _StatModelitemCodeValueEnumMap = {
-  0: ItemCode.S02,
+  0: ItemCode.SO2,
   1: ItemCode.CO,
   2: ItemCode.O3,
   3: ItemCode.NO2,
